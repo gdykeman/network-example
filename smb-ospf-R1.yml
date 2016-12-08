@@ -5,5 +5,6 @@
   tasks:
           ##### CONFIGURE OSPF R1 - R2 #####
     - name: configure OSPF area 0 on R1
-      template:
+      ios_config:
         src: templates/router.j2
+        provider: "{{cli_auth_provider}}"
