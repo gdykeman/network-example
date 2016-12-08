@@ -1,6 +1,6 @@
 ---
 cli_auth_provider:
-  host: "{{ inventory_hostname }}"
+  host: "{{ ansible_host | default(inventory_hostname) }}"
   username: gdykeman
   password: cisco
   transport: cli
