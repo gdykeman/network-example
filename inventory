@@ -1,8 +1,12 @@
-[router]
+[routers]
 R1
 R2
 R3
 
+[switches]
+S1
+S2
+S3
 
 [ospf]
 R1

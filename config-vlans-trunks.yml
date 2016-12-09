@@ -1,34 +1,7 @@
 ---
-- name: configure Switches & Routers
-  hosts: localhost
+- name: configure R3
+  hosts: R3
   connection: local
-
-  vars_prompt:
-    - name: router_pass
-      prompt: "Password"
-
-  vars:
-    S1:
-      host: 172.16.1.98
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-    S2:
-      host: 172.16.1.99
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-    R2:
-      host: 172.16.1.96
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-    R3:
-      host: 172.16.1.97
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-
 
   tasks:
     - name: configure dot1q port on R3 vlan 1
@@ -37,7 +10,7 @@
           - encapsulation dot1q 1
           - ip address 192.168.100.1 255.255.255.0
         parents: interface g0/2.1
-        provider: "{{ R3 }}"
+        provider: "{{ cli_auth_provider }}"
 
     - name: configure dot1q port on R3 vlan 2
       ios_config:
@@ -45,8 +18,12 @@
           - encapsulation dot1q 2
           - ip address 192.168.200.1 255.255.255.0
         parents: interface g0/2.2
-        provider: "{{ R3 }}"
+        provider: "{{ cli_auth_provider }}"
 
+---
+- name: configure R2
+  hosts: R2
+  connection: local
 
     - name: configure dot1q port on R2 vlan 1
       ios_config:
@@ -54,7 +31,7 @@
           - encapsulation dot1q 1
           - ip address 10.1.1.1 255.255.255.0
         parents: interface g0/2.1
-        provider: "{{ R2 }}"
+        provider: "{{ cli_auth_provider }}"
 
     - name: configure dot1q port on R2 vlan 2
       ios_config:
@@ -62,7 +39,11 @@
           - encapsulation dot1q 2
           - ip address 10.2.2.1 255.255.255.0
         parents: interface g0/2.2
-        provider: "{{ R2 }}"
+        provider: "{{ cli_auth_provider }}"
+---
+- name: configure S1
+  hosts: S1
+  connection: local
 
     - name: configure trunk port on S1
       ios_config:
@@ -70,12 +51,17 @@
           - switchport trunk encapsulation dot1q
           - switchport mode trunk
         parents: interface g0/1
-        provider: "{{ S1 }}"
+        provider: "{{ cli_auth_provider }}"
 
+---
+- name: configure S2
+  hosts: S2
+  connection: local
+  
     - name: configure trunk port on S2
       ios_config:
         lines:
           - switchport trunk encap dot1q
           - switchport mode trunk
         parents: interface g0/1
-        provider: "{{ S2 }}"
+        provider: "{{ cli_auth_provider }}"

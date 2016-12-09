@@ -1,29 +1,7 @@
 ---
 - name: Configure Redistribution on the SMB routers
-  hosts: localhost
+  hosts: R1
   connection: local
-
-  vars_prompt:
-    - name: router_pass
-      prompt: "Password"
-
-  vars:
-    R1:
-      host: 172.16.1.101
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-    R2:
-      host: 172.16.1.102
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-    R3:
-      host: 172.16.1.103
-      username: gdykeman
-      password: "{{ router_pass }}"
-      transport: cli
-
 
   tasks:
     - name: Redistribute OSPF into EIGRP on R1
@@ -33,7 +11,7 @@
           - redistribute ospf 1
           - default-metric 10000 100 255 1 2500
         parents: router eigrp 1
-        provider: "{{ R1 }}"
+        provider: "{{ cli_auth_provider }}"
 
     - name: Redistribute EIGRP into OSPF on R1
       ios_config:
@@ -41,4 +19,4 @@
           - network 10.0.0.0 0.0.0.255 area 0
           - redistribute eigrp 1 metric 100 subnets
         parents: router ospf 1
-        provider: "{{ R1 }}"
+        provider: "{{ cli_auth_provider }}"
